@@ -1,0 +1,21 @@
+{% autoescape off %}Hello {{ booking.customer_name }},
+
+Your appointment at {{ salon.name }} is confirmed.
+
+Reference: {{ booking.reference }}
+Service:   {{ booking.service.name }} ({{ booking.service.duration_display }})
+Date:      {{ booking.date_display }}
+Time:      {{ booking.time_display }}
+Price:     {{ booking.price_display }}, paid at the studio
+{% if booking.notes %}
+Your notes:
+{{ booking.notes }}
+{% endif %}
+Where:
+{% for line in salon.address_lines %}{{ line }}
+{% endfor %}
+Need to change or cancel? {% if can_reply %}Reply to this email{% if studio_phone %} or call/WhatsApp {{ studio_phone }}{% endif %}{% elif studio_phone %}Call or WhatsApp {{ studio_phone }}{% else %}Contact the studio{% endif %} and quote {{ booking.reference }}.
+
+See you soon,
+{{ salon.short_name }}
+{% endautoescape %}

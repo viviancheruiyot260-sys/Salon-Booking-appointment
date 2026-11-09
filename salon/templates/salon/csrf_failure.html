@@ -1,0 +1,13 @@
+{% extends "salon/base.html" %}
+
+{% block title %}Form expired · {{ salon.short_name }}{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="container narrow">
+      <h1>The form expired</h1>
+      <p>Refresh the booking page and submit it once. If the booking was already made, it is still in the studio’s list. Sending the form again from a fresh page will not delete it.</p>
+      <p><a class="btn btn-brand" href="{% url 'salon:booking' %}">Return to the booking form</a></p>
+    </div>
+  </section>
+{% endblock %}

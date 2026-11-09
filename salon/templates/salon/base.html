@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ salon.short_name }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}Book an appointment at Glow & Grace Salon, Spa & Nail Studio in Kilimani, Nairobi.{% endblock %}">
+  <meta name="theme-color" content="#a3205a">
+  <link rel="icon" href="{% static 'images/favicon.svg' %}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{% static 'css/site.css' %}?v=20261109" rel="stylesheet">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container header-shell">
+      <a class="brand" href="{% url 'salon:home' %}">
+        <span class="brand-mark" aria-hidden="true">GG</span>
+        <span>
+          <span class="brand-name">{{ salon.short_name }}</span>
+          <span class="brand-meta">Salon, spa and nails</span>
+        </span>
+      </a>
+      <div class="header-actions">
+        <a class="btn btn-brand header-book" href="{% url 'salon:booking' %}">Book an Appointment</a>
+        <button class="nav-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#site-nav" aria-controls="site-nav" aria-expanded="false" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+      <nav id="site-nav" class="primary-nav collapse" aria-label="Primary">
+        <a href="{% url 'salon:home' %}">Home</a>
+        <a href="{% url 'salon:home' %}#services">Services</a>
+        <a href="{% url 'salon:home' %}#gallery">Gallery</a>
+        <a href="{% url 'salon:home' %}#about">About</a>
+        <a href="{% url 'salon:home' %}#contact">Contact</a>
+        <a href="{% url 'salon:booking' %}" {% if request.resolver_match.url_name == "booking" %}aria-current="page"{% endif %}>Book</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <p class="footer-brand">{{ salon.short_name }}</p>
+        <p>A salon, spa and nail studio in Kilimani, Nairobi.</p>
+      </div>
+      <div>
+        <h2>Visit</h2>
+        <a href="{% url 'salon:home' %}#services">Services</a>
+        <a href="{% url 'salon:home' %}#gallery">Gallery</a>
+        <a href="{% url 'salon:home' %}#about">About</a>
+        <a href="{% url 'salon:booking' %}">Book an Appointment</a>
+      </div>
+      <div>
+        <h2>Hours</h2>
+        {% for label, value in salon.hours %}
+          <p>{{ label }}: {{ value }}</p>
+        {% endfor %}
+      </div>
+      <div>
+        <h2>Contact</h2>
+        {% for line in salon.address_lines %}
+          <p>{{ line }}</p>
+        {% endfor %}
+        {% if owner_phone_tel %}
+          <p><a href="tel:{{ owner_phone_tel }}">{{ owner_phone_display }}</a></p>
+        {% endif %}
+        {% if general_whatsapp_url %}
+          <p><a href="{{ general_whatsapp_url }}" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></p>
+        {% endif %}
+        {% if public_email %}
+          <p><a href="mailto:{{ public_email }}">{{ public_email }}</a></p>
+        {% endif %}
+        {% if instagram_url %}
+          <p><a href="{{ instagram_url }}" target="_blank" rel="noopener noreferrer">Instagram</a></p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>© {% now "Y" %} {{ salon.name }}.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'js/site.js' %}?v=20261109"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

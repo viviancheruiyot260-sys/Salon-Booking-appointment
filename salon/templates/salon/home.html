@@ -1,0 +1,195 @@
+{% extends "salon/base.html" %}
+{% load static %}
+
+{% block title %}Glow &amp; Grace Salon, Spa &amp; Nail Studio{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <p class="kicker">Kilimani, Nairobi</p>
+        <h1>Your Beauty &amp; Wellness, All in One Place.</h1>
+        <p class="lead">Explore our salon, spa and nail services, view prices upfront, and book your appointment online in just a few simple steps.</p>
+        <div class="hero-actions">
+          <a class="btn btn-brand" href="{% url 'salon:booking' %}">Book an Appointment</a>
+          <a class="btn btn-outline" href="#services">Explore Our Services</a>
+        </div>
+      </div>
+      <figure class="hero-photo">
+        <img src="{% static 'images/photos/salon-studio.png' %}" width="736" height="981" alt="Pink salon with black styling chairs, arched mirrors, and a reception desk">
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="process">
+    <div class="container">
+      <p class="kicker">How booking works</p>
+      <h2>Book online and get an answer straight away</h2>
+      <div class="steps">
+        <article>
+          <p class="step-no">1</p>
+          <h3>Pick a service</h3>
+          <p>Prices are shown in Kenyan shillings before you start the form.</p>
+        </article>
+        <article>
+          <p class="step-no">2</p>
+          <h3>Choose a time</h3>
+          <p>Pick a date and a start time inside our opening hours.</p>
+        </article>
+        <article>
+          <p class="step-no">3</p>
+          <h3>Book</h3>
+          <p>If the time is free, your appointment is confirmed on the spot.</p>
+        </article>
+        <article>
+          <p class="step-no">4</p>
+          <h3>Time taken? Pick another</h3>
+          <p>We show the nearest open times. Tap one and it is booked.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="services">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="kicker">Catalogue</p>
+          <h2>Services and prices</h2>
+        </div>
+        <p id="results-meta">
+          {% if selected_category %}
+            {{ services|length }} in this category
+          {% else %}
+            {{ service_total }} service{{ service_total|pluralize }}
+          {% endif %}
+        </p>
+      </div>
+      <p class="fine-print catalogue-note">Prices in Kenyan shillings. A later price change does not change a booking that was already made.</p>
+      <div class="filters" role="navigation" aria-label="Filter services by category">
+        <a class="chip{% if not selected_category %} is-active{% endif %}" href="{% url 'salon:home' %}#services"{% if not selected_category %} aria-current="page"{% endif %}>All services</a>
+        {% for category in categories %}
+          <a class="chip{% if category.selected %} is-active{% endif %}" href="{% url 'salon:home' %}?category={{ category.value }}#services"{% if category.selected %} aria-current="page"{% endif %}>
+            {{ category.label }} <span class="chip-count">{{ category.count }}</span>
+          </a>
+        {% endfor %}
+      </div>
+
+      {% if services %}
+        <div class="service-grid">
+          {% for service in services %}
+            <article class="service-card">
+              <div class="service-art tone-{{ service.category }}">
+                {% if service.card_image_url %}
+                  <img src="{{ service.card_image_url }}" alt="{{ service.name }}">
+                {% else %}
+                  <span aria-hidden="true">{{ service.name|slice:":1" }}</span>
+                {% endif %}
+              </div>
+              <div class="service-body">
+                <p class="service-category">{{ service.get_category_display }}</p>
+                <h3><a href="{% url 'salon:service_detail' service.slug %}">{{ service.name }}</a></h3>
+                <p class="service-desc">{{ service.description }}</p>
+                <div class="service-meta">
+                  <p class="price">{{ service.price_display }}</p>
+                  <p class="duration">{{ service.duration_display }}</p>
+                </div>
+                <div class="card-actions">
+                  <a class="btn btn-outline" href="{% url 'salon:service_detail' service.slug %}">View details</a>
+                  <a class="btn btn-brand" href="{% url 'salon:booking' %}?service={{ service.slug }}">Book this service</a>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <h3>No services in this view</h3>
+          <p>Nothing is published here yet. Try another category, or check back after the catalogue is added.</p>
+          <a class="btn btn-outline" href="{% url 'salon:home' %}#services">Show all services</a>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="section" id="gallery">
+    <div class="container">
+      <p class="kicker">Gallery</p>
+      <h2>A look at the studio</h2>
+      <p class="section-intro">Photographs of our treatments. Each picture opens the matching services.</p>
+      <div class="gallery-grid">
+        <figure>
+          <a href="{% url 'salon:home' %}?category=hair#services" aria-label="View hair services">
+            <img src="{% static 'images/photos/knotless-braids.jpg' %}" alt="">
+          </a>
+          <figcaption>Hair</figcaption>
+        </figure>
+        <figure>
+          <a href="{% url 'salon:home' %}?category=spa#services" aria-label="View spa and wellness services">
+            <img src="{% static 'images/photos/relaxation-massage.jpg' %}" alt="">
+          </a>
+          <figcaption>Spa &amp; Wellness</figcaption>
+        </figure>
+        <figure>
+          <a href="{% url 'salon:home' %}?category=nails#services" aria-label="View nail services">
+            <img src="{% static 'images/photos/gel-manicure.jpg' %}" alt="">
+          </a>
+          <figcaption>Nails</figcaption>
+        </figure>
+        <figure>
+          <a href="{% url 'salon:home' %}#about" aria-label="Read about the studio">
+            <img src="{% static 'images/photos/salon-studio.png' %}" alt="">
+          </a>
+          <figcaption>The studio</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="container">
+      <div>
+        <p class="kicker">About</p>
+        <h2>About {{ salon.short_name }}</h2>
+        <p class="about-copy">{{ salon.about }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="container contact-grid">
+      <div class="contact-card">
+        <p class="kicker">Contact</p>
+        <h2>Talk to the studio</h2>
+        <p>Questions about a service are welcome. To change or cancel an appointment, contact us with your booking reference.</p>
+        {% for line in salon.address_lines %}
+          <p class="address-line">{{ line }}</p>
+        {% endfor %}
+        {% if owner_phone_tel %}
+          <p><a class="contact-phone" href="tel:{{ owner_phone_tel }}">{{ owner_phone_display }}</a></p>
+        {% endif %}
+        <div class="contact-actions">
+          {% if general_whatsapp_url %}
+            <a class="btn btn-wa" href="{{ general_whatsapp_url }}" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a>
+          {% endif %}
+          {% if public_email %}
+            <a class="btn btn-outline" href="mailto:{{ public_email }}">Email the studio</a>
+          {% endif %}
+          <a class="btn btn-brand" href="{% url 'salon:booking' %}">Book an Appointment</a>
+        </div>
+      </div>
+      <div class="hours-card">
+        <h2>Opening hours</h2>
+        <p class="fine-print">The last start time also depends on how long the service takes.</p>
+        <dl class="hours-list">
+          {% for label, value in salon.hours %}
+            <div>
+              <dt>{{ label }}</dt>
+              <dd>{{ value }}</dd>
+            </div>
+          {% endfor %}
+        </dl>
+      </div>
+    </div>
+  </section>
+{% endblock %}

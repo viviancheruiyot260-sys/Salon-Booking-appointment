@@ -1,0 +1,94 @@
+{% extends "salon/base.html" %}
+
+{% block title %}Book an appointment · {{ salon.short_name }}{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="container booking-grid">
+      <div>
+        <p class="kicker">Book online</p>
+        <h1>Book an Appointment</h1>
+        <p class="lead">Choose a service and a time. You get an answer as soon as you submit: if the time is free it is booked for you, and if it is taken we show you the nearest open times.</p>
+
+        {% if slot_taken %}
+          <div class="slot-taken" role="alert" tabindex="-1" id="form-errors">
+            <h2>That time is already booked</h2>
+            {% if suggestions %}
+              <p>These times are open for {{ selected_service.name }}. Tap one to book it now. Your details stay as you entered them.</p>
+              <div class="slot-list">
+                {% for slot in suggestions %}
+                  <button class="btn btn-outline slot-btn" type="submit" form="booking-form" name="pick_slot" value="{{ slot.value }}">{{ slot.label }}</button>
+                {% endfor %}
+              </div>
+            {% else %}
+              <p>There are no open times for {{ selected_service.name }} in the next week. Try a later date, or contact the studio on WhatsApp.</p>
+            {% endif %}
+          </div>
+        {% elif form.errors %}
+          <div class="form-alert" role="alert" tabindex="-1" id="form-errors">
+            <p>Please correct the highlighted fields and submit again. Nothing has been booked yet.</p>
+            {% if form.non_field_errors %}
+              <ul>
+                {% for error in form.non_field_errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'salon:booking' %}" novalidate id="booking-form">
+          {% csrf_token %}
+          <input type="hidden" name="form_token" value="{{ form_token }}">
+          {% for field in form %}
+            <div class="field">
+              <label for="{{ field.id_for_label }}">
+                {{ field.label }}
+                {% if field.field.required %}
+                  <span class="req" aria-hidden="true">*</span>
+                  <span class="visually-hidden">required</span>
+                {% else %}
+                  <span class="hint-inline">Optional</span>
+                {% endif %}
+              </label>
+              {{ field }}
+              {% if field.help_text %}
+                <p class="hint" id="{{ field.id_for_label }}-help">{{ field.help_text }}</p>
+              {% endif %}
+              {% if field.name == "notes" %}
+                <p class="hint" id="notes-count" aria-live="polite">0 / 500</p>
+              {% endif %}
+              {% if field.errors %}
+                <p class="field-error" id="{{ field.id_for_label }}-error">
+                  {% for error in field.errors %}{{ error }}{% if not forloop.last %} {% endif %}{% endfor %}
+                </p>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <button class="btn btn-brand" type="submit" id="booking-submit">Book appointment</button>
+          <p class="hint">After booking you can also send the details to the studio on WhatsApp. The message is not sent until you press Send in WhatsApp.</p>
+        </form>
+      </div>
+
+      <aside class="summary-card" id="service-summary" aria-live="polite">
+        <h2>Selected service</h2>
+        {% if selected_service %}
+          <p class="kicker" id="summary-category">{{ selected_service.get_category_display }}</p>
+          <p class="summary-name" id="summary-name">{{ selected_service.name }}</p>
+          <p class="price" id="summary-price">{{ selected_service.price_display }}</p>
+          <p class="duration" id="summary-duration">{{ selected_service.duration_display }}</p>
+          <p id="summary-empty" hidden>Choose a service to see its price and duration.</p>
+        {% else %}
+          <p class="kicker" id="summary-category" hidden></p>
+          <p class="summary-name" id="summary-name" hidden></p>
+          <p class="price" id="summary-price" hidden></p>
+          <p class="duration" id="summary-duration" hidden></p>
+          <p id="summary-empty">Choose a service to see its price and duration. The price you are quoted is calculated on the server from the catalogue.</p>
+        {% endif %}
+        <p class="hint" id="hours-hint">Opening hours depend on the day you choose.</p>
+      </aside>
+    </div>
+  </section>
+  {{ service_data|json_script:"service-data" }}
+  {{ hours_data|json_script:"hours-data" }}
+{% endblock %}

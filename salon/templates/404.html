@@ -1,0 +1,13 @@
+{% extends "salon/base.html" %}
+
+{% block title %}Page not found · {{ salon.short_name }}{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="container narrow">
+      <h1>That page is not available</h1>
+      <p>The link may be mistyped, or the service is no longer published.</p>
+      <p><a class="btn btn-brand" href="{% url 'salon:home' %}">Go to the homepage</a></p>
+    </div>
+  </section>
+{% endblock %}

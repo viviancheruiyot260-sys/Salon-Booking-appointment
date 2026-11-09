@@ -1,0 +1,45 @@
+{% extends "salon/base.html" %}
+
+{% block title %}{{ service.name }} · {{ salon.short_name }}{% endblock %}
+{% block description %}{{ service.description }} Price {{ service.price_display }}, {{ service.duration_display }}.{% endblock %}
+
+{% block content %}
+  <article class="section detail">
+    <div class="container detail-grid">
+      <div class="service-art tone-{{ service.category }} detail-art">
+        {% if service.card_image_url %}
+          <img src="{{ service.card_image_url }}" alt="{{ service.name }}">
+        {% else %}
+          <span aria-hidden="true">{{ service.name|slice:":1" }}</span>
+        {% endif %}
+      </div>
+      <div>
+        <p class="kicker"><a href="{% url 'salon:home' %}?category={{ service.category }}#services">{{ service.get_category_display }}</a></p>
+        <h1>{{ service.name }}</h1>
+        <p class="lead">{{ service.description }}</p>
+        <div class="service-meta detail-meta">
+          <p class="price">{{ service.price_display }}</p>
+          <p class="duration">{{ service.duration_display }}</p>
+        </div>
+        <p class="fine-print">Price in Kenyan shillings. The price saved with your booking is taken from this catalogue when you book.</p>
+        <div class="hero-actions">
+          <a class="btn btn-brand" href="{% url 'salon:booking' %}?service={{ service.slug }}">Book this service</a>
+          <a class="btn btn-outline" href="{% url 'salon:home' %}#services">Back to services</a>
+        </div>
+      </div>
+    </div>
+    {% if related %}
+      <div class="container related">
+        <h2>More in {{ service.get_category_display }}</h2>
+        <ul class="related-list">
+          {% for item in related %}
+            <li>
+              <a href="{% url 'salon:service_detail' item.slug %}">{{ item.name }}</a>
+              <span>{{ item.price_display }} · {{ item.duration_display }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  </article>
+{% endblock %}

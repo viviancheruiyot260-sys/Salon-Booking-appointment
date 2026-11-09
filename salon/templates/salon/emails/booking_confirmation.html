@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your appointment is confirmed</title>
+</head>
+<body style="margin:0;padding:0;background:#fff4f8;font-family:Helvetica,Arial,sans-serif;color:#4a2434;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff4f8;padding:24px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border:1px solid #f4d3e0;border-radius:16px;">
+          <tr>
+            <td style="background:#a3205a;border-radius:16px 16px 0 0;padding:20px 24px;color:#fff5f8;">
+              <p style="margin:0;font-size:14px;letter-spacing:1px;text-transform:uppercase;">{{ salon.short_name }}</p>
+              <h1 style="margin:6px 0 0;font-family:Georgia,serif;font-size:26px;font-weight:normal;">Your appointment is confirmed</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:24px;">
+              <p style="margin:0 0 16px;font-size:16px;">Hello {{ booking.customer_name }},</p>
+              <p style="margin:0 0 20px;font-size:16px;line-height:1.5;">We look forward to seeing you. Here are your booking details.</p>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px;border-collapse:collapse;">
+                <tr><td style="padding:8px 0;color:#8d5b6c;width:110px;border-top:1px solid #f4d3e0;">Reference</td><td style="padding:8px 0;font-weight:bold;border-top:1px solid #f4d3e0;">{{ booking.reference }}</td></tr>
+                <tr><td style="padding:8px 0;color:#8d5b6c;border-top:1px solid #f4d3e0;">Service</td><td style="padding:8px 0;border-top:1px solid #f4d3e0;">{{ booking.service.name }} ({{ booking.service.duration_display }})</td></tr>
+                <tr><td style="padding:8px 0;color:#8d5b6c;border-top:1px solid #f4d3e0;">Date</td><td style="padding:8px 0;border-top:1px solid #f4d3e0;">{{ booking.date_display }}</td></tr>
+                <tr><td style="padding:8px 0;color:#8d5b6c;border-top:1px solid #f4d3e0;">Time</td><td style="padding:8px 0;border-top:1px solid #f4d3e0;">{{ booking.time_display }}</td></tr>
+                <tr><td style="padding:8px 0;color:#8d5b6c;border-top:1px solid #f4d3e0;">Price</td><td style="padding:8px 0;border-top:1px solid #f4d3e0;">{{ booking.price_display }}, paid at the studio</td></tr>
+                {% if booking.notes %}
+                  <tr><td style="padding:8px 0;color:#8d5b6c;border-top:1px solid #f4d3e0;vertical-align:top;">Your notes</td><td style="padding:8px 0;border-top:1px solid #f4d3e0;white-space:pre-line;">{{ booking.notes }}</td></tr>
+                {% endif %}
+                <tr><td style="padding:8px 0;color:#8d5b6c;border-top:1px solid #f4d3e0;border-bottom:1px solid #f4d3e0;vertical-align:top;">Where</td><td style="padding:8px 0;border-top:1px solid #f4d3e0;border-bottom:1px solid #f4d3e0;">{% for line in salon.address_lines %}{{ line }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td></tr>
+              </table>
+              <p style="margin:20px 0 0;font-size:15px;line-height:1.5;">Need to change or cancel? {% if can_reply %}Reply to this email{% if studio_phone %} or call/WhatsApp <a href="{{ studio_whatsapp }}" style="color:#a3205a;">{{ studio_phone }}</a>{% endif %}{% elif studio_phone %}Call or WhatsApp <a href="{{ studio_whatsapp }}" style="color:#a3205a;">{{ studio_phone }}</a>{% else %}Contact the studio{% endif %} and quote <strong>{{ booking.reference }}</strong>.</p>
+              <p style="margin:20px 0 0;font-size:15px;">See you soon,<br>{{ salon.short_name }}</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

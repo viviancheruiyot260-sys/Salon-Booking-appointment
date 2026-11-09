@@ -1,0 +1,79 @@
+{% extends "salon/base.html" %}
+
+{% block title %}{% if booking.status == "confirmed" %}Appointment confirmed{% else %}Appointment status{% endif %} · {{ salon.short_name }}{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="container narrow">
+      {% if booking %}
+        <p class="kicker">Reference {{ booking.reference }}</p>
+        {% if booking.status == "confirmed" %}
+          <h1>Your appointment is confirmed.</h1>
+          <div class="callout confirmed">
+            <strong>See you {{ booking.when_display }}.</strong>
+            <p>The time was free, so it is booked for you. Keep your reference. If you need to change or cancel, contact the studio and quote it.</p>
+          </div>
+        {% elif booking.status == "cancelled" %}
+          <h1>This appointment was cancelled.</h1>
+          <p>Please book another time or contact the studio.</p>
+        {% else %}
+          <h1>Your appointment is {{ booking.get_status_display|lower }}.</h1>
+        {% endif %}
+
+        {% if notice == "duplicate" %}
+          <p class="form-status">This booking was already saved. A second copy was not created, and no extra email was sent for the repeated submission.</p>
+        {% endif %}
+
+        {% if customer_email_status == "sent" %}
+          <p class="form-status">We have emailed your booking details to <strong>{{ booking.customer_email }}</strong>. If you cannot find it, check your spam or promotions folder.</p>
+        {% elif customer_email_status == "console" %}
+          <p class="form-status warning">Email delivery is not switched on for this site yet, so the confirmation for {{ booking.customer_email }} was not sent to a real inbox. Your appointment is still booked.</p>
+        {% elif customer_email_status == "failed" %}
+          <p class="form-alert">We could not email your booking details to {{ booking.customer_email }}. Your appointment is still booked. Keep the reference above or send the details to yourself on WhatsApp.</p>
+        {% elif customer_email_status == "skipped" and booking.status == "confirmed" %}
+          <p class="hint">Add an email address next time and we will send your booking details to your inbox.</p>
+        {% endif %}
+
+        <dl class="receipt">
+          <div><dt>Reference</dt><dd>{{ booking.reference }}</dd></div>
+          <div><dt>Name</dt><dd>{{ booking.customer_name }}</dd></div>
+          <div><dt>Phone</dt><dd>{{ booking.phone_display }}</dd></div>
+          {% if booking.customer_email %}
+            <div><dt>Email</dt><dd>{{ booking.customer_email }}</dd></div>
+          {% endif %}
+          <div><dt>Service</dt><dd>{{ booking.service.name }}</dd></div>
+          <div><dt>When</dt><dd>{{ booking.when_display }}</dd></div>
+          <div><dt>Quoted price</dt><dd>{{ booking.price_display }}</dd></div>
+          <div><dt>Status</dt><dd>{{ booking.get_status_display }}</dd></div>
+          {% if booking.notes %}
+            <div><dt>Notes</dt><dd class="notes">{{ booking.notes }}</dd></div>
+          {% endif %}
+        </dl>
+
+        {% if notice == "failed" %}
+          <p class="form-alert">The studio email could not be sent. Your appointment is still booked. You can send the details on WhatsApp as well.</p>
+        {% endif %}
+
+        <div class="whatsapp-panel">
+          <h2>WhatsApp</h2>
+          {% if whatsapp_url %}
+            <p>Want the details in your chat with the studio? Open WhatsApp with this message filled in, then press Send.</p>
+            {% if whatsapp_shortened %}
+              <p class="fine-print">The WhatsApp message shortens a very long note. The full note is saved with your booking and shown above.</p>
+            {% endif %}
+            <pre class="message-preview">{{ whatsapp_message }}</pre>
+            <a class="btn btn-wa" href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer">Send booking details on WhatsApp</a>
+            <p class="hint">Your appointment is booked whether or not you send this message.</p>
+          {% endif %}
+        </div>
+
+        <p><a href="{% url 'salon:home' %}">Back to the homepage</a></p>
+      {% else %}
+        <h1>No booking is open in this browser</h1>
+        <p>Appointment details are shown only in the browser that made the booking. They are not published on a public lookup page.</p>
+        <p>If you just booked and this page was opened somewhere else, go back to the original browser or contact the studio with your name and phone number.</p>
+        <p><a class="btn btn-brand" href="{% url 'salon:booking' %}">Book an appointment</a></p>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}
